@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ActivityMapper">
+
+    <resultMap type="Activity" id="ActivityResult">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="name" column="name"/>
+        <result property="picture" column="picture"/>
+        <result property="color" column="color"/>
+        <result property="details" column="details"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="refundRule" column="refund_rule"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectActivityVo">
+        select id,
+               merchant_id,
+               name,
+               picture,
+               color,
+               start_time,
+               end_time,
+               details,
+               refund_rule,
+               create_by,
+               create_time,
+               update_by,
+               update_time
+        from activity
+    </sql>
+
+    <select id="selectActivityList" parameterType="Activity" resultMap="ActivityResult">
+        <include refid="selectActivityVo"/>
+        <where>
+            <if test="merchantId != null ">and merchant_id = #{merchantId}</if>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="startTime != null ">and start_time = #{startTime}</if>
+        </where>
+    </select>
+
+    <select id="selectActivityById" parameterType="Long" resultMap="ActivityResult">
+        <include refid="selectActivityVo"/>
+        where id = #{id}
+    </select>
+    <!-- 根据商品查询活动 -->
+    <select id="selectActivityByGoodsId" parameterType="Long" resultMap="ActivityResult">
+        <include refid="selectActivityVo"/>
+        where id in ( SELECT activity_id FROM activity_goods_join WHERE goods_id = #{id})
+    </select>
+    
+
+    <insert id="insertActivity" parameterType="Activity" useGeneratedKeys="true" keyProperty="id">
+        insert into activity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="picture != null and picture != ''">picture,</if>
+            <if test="color != null and color != ''">color,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="refundRule != null">refund_rule,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="details != null">details,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">#{merchantId},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="picture != null and picture != ''">#{picture},</if>
+            <if test="color != null and color != ''">#{color},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="refundRule != null">#{refundRule},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="details != null">#{details},</if>
+        </trim>
+    </insert>
+
+    <update id="updateActivity" parameterType="Activity">
+        update activity
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id = #{merchantId},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="picture != null and picture != ''">picture = #{picture},</if>
+            <if test="color != null and color != ''">color = #{color},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="refundRule != null">refund_rule = #{refundRule},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="details != null">details = #{details},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteActivityById" parameterType="Long">
+        delete
+        from activity
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteActivityByIds" parameterType="String">
+        delete from activity where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

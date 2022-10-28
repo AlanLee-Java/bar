@@ -1,0 +1,470 @@
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+    <title>首页</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link th:href="@{/css/bootstrap.min.css?v=3.3.7}" rel="stylesheet"/>
+	<link th:href="@{/css/font-awesome.min.css?v=4.7.4}" rel="stylesheet"/>
+	<!-- bootstrap-table 表格插件样式 -->
+	<link th:href="@{/ajax/libs/bootstrap-table/bootstrap-table.min.css?v=1.18.3}" rel="stylesheet"/>
+	<link th:href="@{/css/animate.min.css?v=20210831}" rel="stylesheet"/>
+	<link th:href="@{/css/style.min.css?v=20210831}" rel="stylesheet"/>
+	<link th:href="@{/ruoyi/css/ry-ui.css?v=4.7.4}" rel="stylesheet"/>
+	<style type="text/css">
+		tbody{font-size:14px;}
+	</style>
+</head>
+
+<body class="gray-bg">
+	
+    
+    <div class="wrapper wrapper-content">
+		<h1 th:if="${merchant ==null}" style="text-align:center">欢迎使用蹦蹦酒吧系统</h1>
+        <div class="row" th:if="${merchant !=null}" style="margin-bottom:20px">
+            <div class="col-sm-3">
+                <div class=" float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-success pull-right">提现</span>
+                        <h5>余额</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">[[${merchant.balance}]]</h1>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class=" float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-info pull-right">全年</span>
+                        <h5>总订单数</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">[[${data.orderYearNum}]]</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class=" float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-primary pull-right">本月</span>
+                        <h5>订单数</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">[[${data.orderMonthNum}]]</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class=" float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-danger pull-right">本月</span>
+                        <h5>退款订单</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">[[${data.refundNum}]]</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row" th:if="${merchant !=null}">
+        
+        
+		        <div class="col-sm-12 about">
+		            <div class="ibox float-e-margins">
+		                <div class="ibox-title ibox-title-gray dashboard-header gray-bg">
+		                    <h5>商户资料</h5>
+		                </div>
+		                <div class="ibox-content">
+		                    <div class="nav-tabs-custom">
+		                        <ul class="nav nav-tabs">
+		                            <li class="active"><a href="#tab1" data-toggle="tab" aria-expanded="true">基本资料</a></li>
+		                            <li><a href="#tab2" data-toggle="tab"  onclick="selectType($('#typeSelect'))" aria-expanded="false">提现方式</a></li>
+		                            <li><a href="#tab3" data-toggle="tab" onclick="$.table.search('formId','bootstrap-table')" aria-expanded="false">提现记录</a></li>
+		                        </ul>
+		                        <div class="tab-content">
+		                            <!--基本资料-->
+		                            <div class="tab-pane active" id="tab1">
+		                                <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	        								<form class="form-horizontal m" id="form-merchant-edit" th:object="${merchant}">
+			                                    <!--隐藏ID-->
+			                                    <input name="id" th:field="*{id}" type="hidden">
+			                                    <div class="form-group">    
+									                <label class="col-sm-3 control-label is-required">商家名称：</label>
+									                <div class="col-sm-8">
+									                    <input  th:field="*{name}" class="form-control" type="text" disabled="disabled">
+									                </div>
+									            </div>
+									            <div class="form-group">    
+									                <label class="col-sm-3 control-label is-required">商家logo：</label>
+									                <div class="col-sm-8">
+									                    <input type="hidden" name="logo" th:field="*{logo}">
+									                    <div class="file-loading">
+									                        <input class="form-control file-upload" id="logo" name="file" type="file">
+									                    </div>
+									                </div>
+									            </div>
+									            <div class="form-group">    
+									                <label class="col-sm-3 control-label is-required">联系方式：</label>
+									                <div class="col-sm-8">
+									                    <input name="contact" th:field="*{contact}" class="form-control" type="text" required>
+									                </div>
+									            </div>
+									            <div class="form-group">    
+									                <label class="col-sm-3 control-label is-required">商家城市：</label>
+									                <div class="col-sm-8">
+									                    <input name="city" th:field="*{city}" class="form-control" type="text" required>
+									                </div>
+									            </div>
+									            <div class="form-group">    
+									                <label class="col-sm-3 control-label is-required">商家地址：</label>
+									                <div class="col-sm-8">
+									                    <input name="address" th:field="*{address}" class="form-control" type="text" required>
+									                </div>
+									            </div>
+									            <div class="form-group">
+									                <label class="col-sm-3 control-label">商家描述：</label>
+									                <div class="col-sm-8">
+									                    <textarea name="description" class="form-control">[[*{description}]]</textarea>
+									                </div>
+									            </div>
+									            <div class="form-group">    
+									                <label class="col-sm-3 control-label is-required">开始开放工作日：</label>
+									                <div class="col-sm-8">
+									                    <select name="startDay" th:field="*{startDay}" class="form-control"  required>
+									                    	<option value="1">周一</option>
+									                    	<option value="2">周二</option>
+									                    	<option value="3">周三</option>
+									                    	<option value="4">周四</option>
+									                    	<option value="5">周五</option>
+									                    	<option value="6">周六</option>
+									                    	<option value="7">周日</option>
+									                    </select>
+									                </div>
+									            </div>
+									            <div class="form-group">    
+									                <label class="col-sm-3 control-label is-required">结束开放工作日：</label>
+									                <div class="col-sm-8">
+									                    <select name="endDay" th:field="*{endDay}" class="form-control"  required>
+									                    	<option value="1">周一</option>
+									                    	<option value="2">周二</option>
+									                    	<option value="3">周三</option>
+									                    	<option value="4">周四</option>
+									                    	<option value="5">周五</option>
+									                    	<option value="6">周六</option>
+									                    	<option value="7">周日</option>
+									                    </select>
+									                </div>
+									            </div>
+									            <div class="form-group">    
+									                <label class="col-sm-3 control-label is-required">开始开放时间：</label>
+									                <div class="col-sm-8">
+									                    <input name="startTime" th:field="*{startTime}" class="form-control" type="text" required>
+									                     <span class="help-block m-b-none"><i class="fa fa-info-circle"></i>注意填写格式 06:00</span>
+									                </div>
+									            </div>
+									            <div class="form-group">    
+									                <label class="col-sm-3 control-label is-required">结束开放时间：</label>
+									                <div class="col-sm-8">
+									                    <input name="endTime" th:field="*{endTime}" class="form-control" type="text" required>
+									                     <span class="help-block m-b-none"><i class="fa fa-info-circle"></i>注意填写格式 20:00</span>
+									                </div>
+									            </div>
+			                                    
+			                                    <div class="form-group">
+			                                     	<label class="col-sm-3 control-label is-required"></label>
+			                                         <div class="col-sm-8">
+			                                            <button type="button" class="btn btn-sm btn-primary" onclick="submitMerchant()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+			                                         </div>
+			                                    </div>
+			                                </form>
+			                       		</div>
+		                            </div>
+		                            
+		                            <!--提现方式-->
+		                            <div class="tab-pane" id="tab2">
+		                                <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	        								<form class="form-horizontal m" id="form-tixian-edit" th:object="${merchant}">
+			                                    <!--隐藏ID-->
+			                                    <input name="id" th:field="*{id}" type="hidden">
+			                                    <div class="form-group" id="typeDiv">    
+									                <label class="col-sm-3 control-label is-required">提现类型：</label>
+									                <div class="col-sm-8">
+									                    <select name="type" th:field="*{type}" id="typeSelect" class="form-control" onchange="selectType(this)"  required>
+									                    	<option value="1">微信</option>
+									                    	<option value="2">支付宝</option>
+									                    	<option value="3">银行卡</option>
+									                    </select>
+									                </div>
+									            </div>
+									            <div id="typeContent">
+									            </div>
+			                                    
+			                                    
+			                                    <div class="form-group">
+			                                     	<label class="col-sm-3 control-label"></label>
+			                                         <div class="col-sm-8">
+			                                            <button type="button" class="btn btn-sm btn-primary" onclick="submitMerchant2()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+			                                        </div>
+			                                    </div>
+			                                </form>
+			                       		</div>
+		                            </div>
+		                        
+		                        	<div class="tab-pane" id="tab3">
+		                        		<div class="row">
+			                        		<div class="col-sm-12 search-collapse">
+								                <form id="formId">
+								                    <div class="select-list">
+								                     	<input type="hidden"  name="merchantId" th:value="${merchant.id}"/>
+								                        <ul>
+								                            <li>
+								                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('formId','bootstrap-table')"><i class="fa fa-refresh"></i>&nbsp;刷新</a>
+								                            </li>
+								                        </ul>
+								                    </div>
+								                </form>
+								            </div>
+								            <div class="btn-group-sm" id="toolbar" role="group">
+								                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:withdraw:add">
+								                    <i class="fa fa-plus"></i> 申请提现
+								                </a>
+								               
+								            </div>
+								            <div class="col-sm-12 select-table table-striped">
+								                <table id="bootstrap-table"></table>
+								            </div>
+								        </div>  
+		                        	</div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+        
+      </div>
+    </div>
+    <script th:inline="javascript"> var ctx = [[@{/}]]; var lockscreen = [[${session.lockscreen}]]; if(lockscreen){window.top.location=ctx+"lockscreen";} </script>
+    <script th:src="@{/js/jquery.min.js?v=3.6.0}"></script>
+	<script th:src="@{/js/bootstrap.min.js?v=3.3.7}"></script>
+	<!-- bootstrap-table 表格插件 -->
+	<script th:src="@{/ajax/libs/bootstrap-table/bootstrap-table.min.js?v=1.18.3}"></script>
+	<script th:src="@{/ajax/libs/bootstrap-table/locale/bootstrap-table-zh-CN.min.js?v=1.18.3}"></script>
+	<script th:src="@{/ajax/libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js?v=1.18.3}"></script>
+	<!-- jquery-validate 表单验证插件 -->
+	<script th:src="@{/ajax/libs/validate/jquery.validate.min.js?v=1.19.3}"></script>
+	<script th:src="@{/ajax/libs/validate/jquery.validate.extend.js?v=1.19.3}"></script>
+	<script th:src="@{/ajax/libs/validate/messages_zh.js?v=1.19.3}"></script>
+	<!-- bootstrap-table 表格树插件 -->
+	<script th:src="@{/ajax/libs/bootstrap-table/extensions/tree/bootstrap-table-tree.min.js?v=1.18.3}"></script>
+	<!-- 遮罩层 -->
+	<script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js?v=2.70.0}"></script>
+    <script th:src="@{/ajax/libs/iCheck/icheck.min.js?v=1.0.3}"></script>
+	<script th:src="@{/ajax/libs/layer/layer.min.js?v=3.5.1}"></script>
+	<script th:src="@{/ajax/libs/layui/layui.min.js?v=2.7.5}"></script>
+	<script th:src="@{/ruoyi/js/common.js?v=4.7.4}"></script>
+	<script th:src="@{/ruoyi/js/ry-ui.js?v=4.7.4}"></script>
+	<div th:fragment="bootstrap-fileinput-css">
+    <link th:href="@{/ajax/libs/bootstrap-fileinput/fileinput.min.css?v=5.2.4}" rel="stylesheet"/>
+	</div>
+	<div th:fragment="bootstrap-fileinput-js">
+	    <script th:src="@{/ajax/libs/bootstrap-fileinput/fileinput.min.js?v=5.2.4}"></script>
+	</div>
+    <script  th:inline="javascript">
+    	var merchant = [[${merchant}]];
+    
+	    var prefix = ctx + "system/merchant";
+	    $("#form-merchant-edit").validate({
+	        focusCleanup: true
+	    });
+	
+	    function submitMerchant() {
+	        if ($.validate.form()) {
+	        	//判断图片上传
+            	var logo =  $("input[name='logo']").val();
+            	if(!logo){
+            		$.modal.alertError("请上传图片！");
+            		return;
+            	}
+	            $.operate.save(prefix + "/edit", $('#form-merchant-edit').serialize());
+	        }
+	    }
+	
+	    $(".file-upload").each(function (i) {
+	        var val = $("input[name='" + this.id + "']").val()
+	        $(this).fileinput({
+	            'uploadUrl': ctx + 'common/upload',
+	            initialPreviewAsData: true,
+	            initialPreview: [val],
+	            maxFileCount: 1,
+	            autoReplace: true
+	        }).on('fileuploaded', function (event, data, previewId, index) {
+	            $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
+	        }).on('fileremoved', function (event, id, index) {
+	            $("input[name='" + event.currentTarget.id + "']").val('')
+	        })
+	        $(this).fileinput('_initFileActions');
+	    });
+	    
+	    /* 提现方式 */
+	    $("#form-tixian-edit").validate({
+	        focusCleanup: true
+	    });
+	
+	    function submitMerchant2() {
+	        if ($.validate.form("form-tixian-edit")) {
+	            $.operate.save(prefix + "/edit", $('#form-tixian-edit').serialize());
+	        }
+	    }
+	    
+	    function selectType(e){
+	    	var type = $(e).val();
+	    	var html = "";
+	    	console.log("type=" + type);
+	    	$("#typeContent").html("");
+	    	if(type === '1'){
+	    		html = '<div class="form-group"> ' +	
+				            '<label class="col-sm-3 control-label is-required">微信号：</label>' +	
+				            '<div class="col-sm-8">' +	
+				               ' <input name="wechatId"  value="'+ (merchant.wechatId == null?'':merchant.wechatId)+'" class="form-control" type="text" required>' +	
+				            '</div>' +	
+	       				'</div>';
+	    	}
+	    	else if (type === '2'){
+	    		html = '<div class="form-group">  ' +	  
+			            '<label class="col-sm-3 control-label is-required">支付宝号：</label>' +	
+			            '<div class="col-sm-8">' +	
+			                '<input name="alipayId" value="'+(merchant.alipayId == null?'':merchant.alipayId)+'" class="form-control" type="text" required>' +	
+			            '</div>' +	
+			        '</div>';
+	    	}        
+	    	else if (type === '3'){        
+	    		html = '  <div class="form-group">  ' +	  
+				            '<label class="col-sm-3 control-label is-required">收款姓名：</label>' +	
+				            '<div class="col-sm-8">' +	
+				               ' <input name="collectionName" value="'+(merchant.collectionName == null?'':merchant.collectionName) +'" class="form-control" type="text" required>' +	
+				            '</div>' +	
+				        '</div>' +	
+				        '<div class="form-group">   ' +	 
+				            '<label class="col-sm-3 control-label is-required">收款卡号：</label>' +	
+				            '<div class="col-sm-8">' +	
+				                '<input name="collectionCardNo" value="'+(merchant.collectionCardNo == null?'':merchant.collectionCardNo)+'" class="form-control" type="text" required>' +	
+				            '</div>' +	
+				        '</div>' +	
+				         '<div class="form-group">  ' +	  
+				            '<label class="col-sm-3 control-label is-required">收款银行：</label>' +	
+				            '<div class="col-sm-8">' +	
+				               ' <input name="collectionBank" value="'+(merchant.collectionBank == null?'':merchant.collectionBank)+'" class="form-control" type="text" required>' +	
+				            '</div>' +	
+				        '</div>';
+	    	}
+	    	
+	    	$("#typeContent").append(html);
+	    }
+	    
+	    /* 提现记录*/
+        $(function() {
+        	 var editFlag = [[${@permission.hasPermi('system:withdraw:edit')}]];
+        	 var viewFlag = [[${@permission.hasPermi('system:withdraw:view')}]];
+     	    var withdrawTypeDatas = [[${@dict.getType("withdraw_type")}]];
+     	    var statusDatas = [[${@dict.getType('withdraw_status')}]];
+     	    var prefix = ctx + "system/withdraw";
+     	    
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                exportUrl: prefix + "/export",
+                modalName: "提现记录",
+                sortName: "createTime",
+                sortOrder: "desc",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '唯一主键',
+                    visible: false
+                },
+                {
+                    field: 'merchantName',
+                    title: '商家信息',
+                    formatter: function(value, row, index) {
+                    	if(!value){
+                    		return "-";
+                    	}
+                    	return value + " ("+row.merchantId+")";
+                    }
+                },
+                {
+                    field: 'withdrawType',
+                    title: '提现类型',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(withdrawTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'wechatId',
+                    title: '提现账号',
+                    formatter: function(value, row, index) {
+                        if(row.withdrawType == 1){
+                        	return "微信账号：" + row.wechatId;
+                        } else if(row.withdrawType == 2){
+                        	return "支付宝账号：" + row.alipayId;
+                        } else if(row.withdrawType == 3){
+                        	var html = "收账姓名：" + row.collectionName + "<br/>";
+                        	html +="收账卡号：" + row.collectionCardNo + "<br/>";
+                        	html +="收账银行：" + row.collectionBank + "<br/>";
+                        	return html;
+                        }
+                    }
+                },
+                {
+                    field: 'amount',
+                    title: '提现金额',
+                    formatter: function(value, row, index) {
+                        return "￥ " + value;
+                    }
+                },
+                {
+                    field: 'remark',
+                    title: '提现备注'
+                },{
+                    field: 'createTime',
+                    title: '创建时间'
+                },{
+                    field: 'status',
+                    title: '状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(statusDatas, value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-info btn-xs ' + viewFlag + '" href="javascript:void(0)" onclick="view(\'' + row.id + '\')"><i class="fa fa-edit"></i>详情</a> ');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+	    
+        /* 提现详情 */
+        function view(id){
+        	$.modal.open("提现详情", ctx + "system/withdraw/view/"+id , null , null,function(index, layero) {
+        		$.modal.close(index);
+            });
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OrdersMapper">
+
+    <resultMap type="Orders" id="OrdersResult">
+        <result property="id" column="id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="verificationCode" column="verification_code"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="userName"/>
+        <result property="merchantName" column="merchantName"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="activityId" column="activity_id"/>
+        <result property="activityName" column="activity_name"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="goodsType" column="goods_type"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="goodsPrice" column="goods_price"/>
+        <result property="quantity" column="quantity"/>
+        <result property="orderAmount" column="order_amount"/>
+        <result property="status" column="status"/>
+        <result property="payChannel" column="pay_channel"/>
+        <result property="tradeNo" column="trade_no"/>
+        <result property="validStartTime" column="valid_start_time"/>
+        <result property="validEndTime" column="valid_end_time"/>
+        <result property="consumeTime" column="consume_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectOrdersVo">
+        select id,
+               order_no,
+               verification_code,
+               user_id,
+               ( SELECT wx_name FROM `bar_user` where id = user_id) as userName,
+               merchant_id,
+               ( SELECT `name` FROM  merchant Where id = merchant_id ) as merchantName ,
+               activity_id,
+               activity_name,
+               goods_id,
+               goods_type,
+               goods_name,
+               goods_price,
+               quantity,
+               order_amount,
+               status,
+               pay_channel,
+               trade_no,
+               valid_start_time,
+               valid_end_time,
+               consume_time,
+               delete_flag,
+               create_time,
+               update_time
+        from orders
+    </sql>
+
+    <select id="selectOrdersList" parameterType="Orders" resultMap="OrdersResult">
+        <include refid="selectOrdersVo"/>
+        <where>
+            <if test="orderNo != null ">and order_no like concat('%',  #{orderNo}, '%')</if>
+            <if test="verificationCode != null ">and verification_code = #{verificationCode}</if>
+            <if test="userId != null ">and user_id = #{userId}</if>
+            <if test="merchantId != null ">and merchant_id = #{merchantId}</if>
+            <if test="activityId != null ">and activity_id = #{activityId}</if>
+            <if test="activityName != null  and activityName != ''">and activity_name like concat('%', #{activityName},'%') </if>
+            <if test="goodsId != null ">and goods_id = #{goodsId}</if>
+            <if test="goodsType != null ">and goods_type = #{goodsType}</if>
+            <if test="goodsName != null  and goodsName != ''">and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="payChannel != null ">and pay_channel = #{payChannel}</if>
+            <if test="tradeNo != null  and tradeNo != ''">and trade_no = #{tradeNo}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and concat(#{params.endCreateTime},' 23:59:59')</if>
+        
+        </where>
+    </select>
+
+    <select id="selectOrdersById" parameterType="Long" resultMap="OrdersResult">
+        <include refid="selectOrdersVo"/>
+        where id = #{id}
+    </select>
+
+    <!-- 根据核销码查询订单 -->
+    <select id="selectByVerificationCode" parameterType="Long" resultMap="OrdersResult">
+        <include refid="selectOrdersVo"/>
+        where verification_code = #{verificationCode}
+    </select>
+
+    <insert id="insertOrders" parameterType="Orders" useGeneratedKeys="true" keyProperty="id">
+        insert into orders
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">order_no,</if>
+            <if test="verificationCode != null">verification_code,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="merchantId != null">merchant_id,</if>
+            <if test="activityId != null">activity_id,</if>
+            <if test="activityName != null">activity_name,</if>
+            <if test="goodsId != null">goods_id,</if>
+            <if test="goodsType != null">goods_type,</if>
+            <if test="goodsName != null and goodsName != ''">goods_name,</if>
+            <if test="goodsPrice != null">goods_price,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="orderAmount != null">order_amount,</if>
+            <if test="status != null">status,</if>
+            <if test="payChannel != null">pay_channel,</if>
+            <if test="tradeNo != null">trade_no,</if>
+            <if test="validStartTime != null">valid_start_time,</if>
+            <if test="validEndTime != null">valid_end_time,</if>
+            <if test="consumeTime != null">consume_time,</if>
+            <if test="deleteFlag != null">delete_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="verificationCode != null">#{verificationCode},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="merchantId != null">#{merchantId},</if>
+            <if test="activityId != null">#{activityId},</if>
+            <if test="activityName != null">#{activityName},</if>
+            <if test="goodsId != null">#{goodsId},</if>
+            <if test="goodsType != null">#{goodsType},</if>
+            <if test="goodsName != null and goodsName != ''">#{goodsName},</if>
+            <if test="goodsPrice != null">#{goodsPrice},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="orderAmount != null">#{orderAmount},</if>
+            <if test="status != null">#{status},</if>
+            <if test="payChannel != null">#{payChannel},</if>
+            <if test="tradeNo != null">#{tradeNo},</if>
+            <if test="validStartTime != null">#{validStartTime},</if>
+            <if test="validEndTime != null">#{validEndTime},</if>
+            <if test="consumeTime != null">#{consumeTime},</if>
+            <if test="deleteFlag != null">#{deleteFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <!-- 核销订单 -->
+    <update id="verification" parameterType="Orders">
+        update orders
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null">status = #{status},</if>
+            <if test="consumeTime != null">consume_time = #{consumeTime},</if>
+        </trim>
+        where verification_code = #{verificationCode}
+    </update>
+
+    <delete id="deleteOrdersById" parameterType="Long">
+        delete
+        from orders
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteOrdersByIds" parameterType="String">
+        delete from orders where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

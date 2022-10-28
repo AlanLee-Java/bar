@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('订单列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>订单号：</label>
+                                <input type="text" name="orderNo"/>
+                            </li>
+                            <li>
+                                <label>用户ID：</label>
+                                <input type="text" name="userId"/>
+                            </li>
+                            <li>
+                                <label>商家ID：</label>
+                                <input type="text" name="merchantId"/>
+                            </li>
+                            <li>
+                                <label>商品ID：</label>
+                                <input type="text" name="goodsId"/>
+                            </li>
+                            <li>
+                                <label>商品名称：</label>
+                                <input type="text" name="goodsName"/>
+                            </li>
+                            <li class="select-time">
+                                <label>创建时间：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginCreateTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endCreateTime]"/>
+                            </li>
+                            <li>
+                                <label>订单状态：</label>
+                                <select name="status" th:with="type=${@dict.getType('order_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:orders:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/orders";
+        var typeDatas = [[${@dict.getType('good_types')}]];
+        var orderStatusDatas = [[${@dict.getType('order_status')}]];
+        var viewFlag = [[${@permission.hasPermi('system:orders:view')}]];
+        var hexiaoFlag = [[${@permission.hasPermi('system:orders:hexiao')}]];
+        
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                exportUrl: prefix + "/export",
+                modalName: "订单",
+                sortName: "createTime",
+                sortOrder: "desc",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '唯一主键',
+                    visible: false
+                },
+                {
+                    field: 'orderNo',
+                    title: '订单号'
+                },
+                {
+                    field: 'userId',
+                    title: '微信用户',
+                    formatter: function(value, row, index) {
+                        return row.userName + " ("+value+")";
+                     }
+                },
+                {
+                    field: 'merchantName',
+                    title: '商家信息',
+                    formatter: function(value, row, index) {
+                    	if(!value){
+                    		return "-";
+                    	}
+                    	return value + " ("+row.merchantId+")";
+                    }
+                },
+                {
+                    field: 'activityName',
+                    title: '活动信息',
+                    formatter: function(value, row, index) {
+                    	if(!value){
+                    		return "-";
+                    	}
+                    	return value + " ("+row.activityId+")";
+                    }
+                    
+                },
+                {
+                    field: 'goodsId',
+                    title: '商品信息',
+                    formatter: function(value, row, index) {
+                    	var html = "商品ID：" + value + "<br/>";
+                    	html += "商品类型：" + $.table.selectDictLabel(typeDatas, row.goodsType) + "<br/>";
+                    	html += "商品名称：" + row.goodsName + "<br/>";
+                    	html += "商品价格：￥ " + row.goodsPrice + "<br/>";
+                        return html;
+                    }
+                },
+                {
+                    field: 'quantity',
+                    title: '购买数量'
+                },
+                {
+                    field: 'orderAmount',
+                    title: '订单金额',
+                    formatter: function(value, row, index) {
+                        return "￥ " + value;
+                    }
+                },
+                {
+                    field: 'payChannel',
+                    title: '支付渠道'
+                },
+                {
+                    field: 'tradeNo',
+                    title: '支付单号'
+                }, 
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                }, 
+                {
+                    field: 'status',
+                    title: '订单状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(orderStatusDatas, value);
+                     }
+                    
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + viewFlag + '" href="javascript:void(0)" onclick="view(\'' + row.id + '\')"><i class="fa fa-edit"></i>详情</a> ');
+                    	if(row.status == 1){
+                        	actions.push('<a class="btn btn-info btn-xs ' + hexiaoFlag + '" href="javascript:void(0)" onclick="hexiao(\'' + row.id + '\')"><i class="fa fa-edit"></i>核销</a> ');
+                        	
+                        }
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+        
+        /* 查询订单 */
+        function view(id){
+        	$.modal.open("订单详情", prefix + "/view/"+id , null , null,function(index, layero) {
+        		$.modal.close(index);
+            });
+        }
+        
+        /* 核销订单 */
+        function hexiao(id){
+        	$.modal.open("核销订单", prefix + "/hexiao/"+id ,800,300);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.applet.mapper.ActivityMapper">
+
+    <select id="queryActivity" resultType="com.ruoyi.applet.model.vo.ActivityQueryVO">
+        SELECT
+        a.id AS id,
+        a.merchant_id AS merchantId,
+        a.name AS name,
+        a.picture AS picture,
+        a.color AS color,
+        DATE_FORMAT( a.start_time, '%Y-%m' ) AS activityMonth,
+        m.city AS city,
+        a.start_time as startTime
+        FROM
+        activity a
+        LEFT JOIN merchant m ON m.id = a.merchant_id
+        <where>
+            <if test="param.name != null and param.name != ''">
+                a.name LIKE CONCAT('%',#{param.name},'%')
+            </if>
+            <if test="param.city != null and param.city != ''">
+                AND m.city = #{param.city}
+            </if>
+        </where>
+        GROUP BY
+        DATE_FORMAT( a.start_time, '%Y-%m' ),a.id
+        ORDER BY a.start_time
+    </select>
+
+</mapper>

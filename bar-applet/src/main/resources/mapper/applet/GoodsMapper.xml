@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.applet.mapper.GoodsMapper">
+
+    <!-- 减商品数量 -->
+    <update id="subtractGoodsQuantity">
+        UPDATE goods g
+        SET g.quantity = g.quantity - #{quantity}
+        WHERE g.id = #{id}
+          AND g.quantity >= #{quantity}
+    </update>
+
+</mapper>

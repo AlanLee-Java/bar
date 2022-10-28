@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.applet.mapper.MerchantMapper">
+
+    <!-- 增加商家余额 -->
+    <update id="increaseBalance">
+        UPDATE merchant m
+        SET m.balance = m.balance + #{amount}
+        WHERE m.id = #{id}
+          AND #{amount} > 0
+    </update>
+
+    <!-- 减少商家余额 -->
+    <update id="decreaseBalance">
+        UPDATE merchant m
+        SET m.balance = m.balance - #{amount}
+        WHERE m.id = #{id}
+          AND m.balance >= #{amount}
+    </update>
+
+</mapper>

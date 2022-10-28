@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.GoodsRefundRuleMapper">
+
+    <resultMap type="GoodsRefundRule" id="GoodsRefundRuleResult">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="refundTime" column="refund_time"/>
+        <result property="conditionType" column="condition_type"/>
+        <result property="isAllow" column="is_allow"/>
+        <result property="refundRate" column="refund_rate"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectGoodsRefundRuleVo">
+        select id,
+               merchant_id,
+               goods_id,
+               refund_time,
+               condition_type,
+               is_allow,
+               refund_rate,
+               create_by,
+               create_time,
+               update_by,
+               update_time
+        from goods_refund_rule
+    </sql>
+
+    <select id="selectGoodsRefundRuleList" parameterType="GoodsRefundRule" resultMap="GoodsRefundRuleResult">
+        <include refid="selectGoodsRefundRuleVo"/>
+        <where>
+            <if test="goodsId != null ">and goods_id = #{goodsId}</if>
+        </where>
+    </select>
+
+    <select id="selectGoodsRefundRuleById" parameterType="Long" resultMap="GoodsRefundRuleResult">
+        <include refid="selectGoodsRefundRuleVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGoodsRefundRule" parameterType="GoodsRefundRule" useGeneratedKeys="true" keyProperty="id">
+        insert into goods_refund_rule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id,</if>
+            <if test="goodsId != null">goods_id,</if>
+            <if test="refundTime != null">refund_time,</if>
+            <if test="conditionType != null">condition_type,</if>
+            <if test="isAllow != null">is_allow,</if>
+            <if test="refundRate != null">refund_rate,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">#{merchantId},</if>
+            <if test="goodsId != null">#{goodsId},</if>
+            <if test="refundTime != null">#{refundTime},</if>
+            <if test="conditionType != null">#{conditionType},</if>
+            <if test="isAllow != null">#{isAllow},</if>
+            <if test="refundRate != null">#{refundRate},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateGoodsRefundRule" parameterType="GoodsRefundRule">
+        update goods_refund_rule
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id = #{merchantId},</if>
+            <if test="goodsId != null">goods_id = #{goodsId},</if>
+            <if test="refundTime != null">refund_time = #{refundTime},</if>
+            <if test="conditionType != null">condition_type = #{conditionType},</if>
+            <if test="isAllow != null">is_allow = #{isAllow},</if>
+            <if test="refundRate != null">refund_rate = #{refundRate},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGoodsRefundRuleById" parameterType="Long">
+        delete
+        from goods_refund_rule
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteGoodsRefundRuleByIds" parameterType="String">
+        delete from goods_refund_rule where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

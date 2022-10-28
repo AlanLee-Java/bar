@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('订单信息')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-refund-edit" th:object="${order}">
+            <input name="id" th:field="*{id}" type="hidden">
+            
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单号：</label>
+                <div class="col-sm-8">
+                    <label class="control-label">[[*{orderNo}]]</label>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单金额：</label>
+                <div class="col-sm-8">
+                    <label class="control-label">￥[[*{orderAmount}]]</label>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单状态：</label>
+                <div class="col-sm-8" th:with="type=${@dict.getType('order_status')}" >
+                    <label th:each="dict : ${type}" th:if="${dict.dictValue == order.status+''}" class="control-label">[[${dict.dictLabel}]]</label>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">创建时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                    	<label class="control-label">[[${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm:ss')}]]</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">完成时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                    	<label class="control-label">[[${#dates.format(order.consumeTime, 'yyyy-MM-dd HH:mm:ss')}]]</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">商户信息：</label>
+                <div class="col-sm-8">
+                    <label class="control-label">[[*{merchantName}]] ([[*{merchantId}]])</label>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">用户信息：</label>
+                <div class="col-sm-8">
+                    <label class="control-label">[[*{userName}]] ([[*{userId}]])</label>
+                </div>
+            </div>
+            
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">商品信息：</label>
+                <div class="col-sm-8" th:with="type2=${@dict.getType('good_types')}">
+                	<label class="control-label">商品ID：[[*{goodsId}]]</label><br/>
+                    <label class="control-label">商品名称：[[*{goodsName}]]</label><br/>
+                    <label class="control-label" th:each="dict : ${type2}" th:if="${dict.dictValue == order.goodsType+''}" >商品类型：[[${dict.dictLabel}]]</label><br/>
+                    <label class="control-label">购买数量：[[*{quantity}]]</label><br/>
+                    <label class="control-label">商品单价：￥[[*{goodsPrice}]]</label><br/>
+                </div>
+            </div>
+            <div class="form-group" th:if="${order.goodsType == 3}">    
+                <label class="col-sm-3 control-label">活动信息：</label>
+                <div class="col-sm-8">
+                	 <label class="control-label">[[*{activityName}]] ([[*{activityId}]])</label>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">支付信息：</label>
+                <div class="col-sm-8">
+                     <label class="control-label">支付渠道：[[*{payChannel}]]</label><br/>
+                     <label class="control-label">支付订单：[[*{tradeNo}]]</label><br/>
+                </div>
+            </div>
+            
+           
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+	    function submitHandler() {
+	    	$.modal.enable();
+	    }
+    </script>
+</body>
+</html>

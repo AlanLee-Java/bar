@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ActivityGoodsJoinMapper">
+
+    <resultMap type="ActivityGoodsJoin" id="ActivityGoodsJoinResult">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="activityId" column="activity_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result  property="merchantName" column="merchantName"/>
+        <association javaType="Goods"  property="good" resultMap="GoodsResult"></association>
+    </resultMap>
+    
+     <resultMap type="Goods" id="GoodsResult">
+        <result property="id"    column="id"    />
+        <result property="merchantId"    column="merchant_id_g"    />
+        <result property="type"    column="type"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <result property="price"    column="price"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectActivityGoodsJoinVo">
+        select id,
+               merchant_id,
+               activity_id,
+               goods_id,
+               create_by,
+               create_time,
+               update_by,
+               update_time
+        from activity_goods_join
+    </sql>
+
+    <select id="selectActivityGoodsJoinList"  resultMap="ActivityGoodsJoinResult">
+        
+		select ag.id,ag.merchant_id,ag.activity_id,ag.goods_id,ag.create_by,ag.create_time,ag.update_by,ag.update_time,
+		g.merchant_id as merchant_id_g, g.type, g.`name`, g.description, g.price, g.quantity, g.`status`,m.`name` as merchantName
+
+        from activity_goods_join ag JOIN goods g On ag.goods_id = g.id
+				LEFT JOIN merchant m ON ag.merchant_id = m.id
+        <where>
+         	<if test="en.merchantId != null">and ag.merchant_id= #{en.merchantId} </if>
+            <if test="en.activityId != null ">and ag.activity_id = #{en.activityId} </if>
+            <if test="en.goodsId != null ">and ag.goods_id = #{en.goodsId} </if>
+            <if test="goodName != null ">and g.`name` like '%${goodName}%' </if>
+             <if test="goodStatus != null ">and g.`status` = #{goodStatus} </if>
+        </where>
+    </select>
+
+    <select id="selectActivityGoodsJoinById" parameterType="Long" resultMap="ActivityGoodsJoinResult">
+        <include refid="selectActivityGoodsJoinVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertActivityGoodsJoin" parameterType="ActivityGoodsJoin" useGeneratedKeys="true" keyProperty="id">
+        insert into activity_goods_join
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id,</if>
+            <if test="activityId != null">activity_id,</if>
+            <if test="goodsId != null">goods_id,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">#{merchantId},</if>
+            <if test="activityId != null">#{activityId},</if>
+            <if test="goodsId != null">#{goodsId},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateActivityGoodsJoin" parameterType="ActivityGoodsJoin">
+        update activity_goods_join
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id = #{merchantId},</if>
+            <if test="activityId != null">activity_id = #{activityId},</if>
+            <if test="goodsId != null">goods_id = #{goodsId},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteActivityGoodsJoinById" parameterType="Long">
+        delete
+        from activity_goods_join
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteActivityGoodsJoinByIds" parameterType="String">
+        delete from activity_goods_join where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <!-- 根据活动删除商品  -->
+    <delete id="deleteGoodByGoodJoinIds" parameterType="String">
+        delete from goods where id in(
+        	select goods_id from activity_goods_join where id in
+		        <foreach item="id" collection="array" open="(" separator="," close=")">
+		            #{id}
+		        </foreach>
+        ) 
+    </delete>
+
+</mapper>

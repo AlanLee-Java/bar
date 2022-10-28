@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('bar用户列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>OpenId：</label>
+                                <input type="text" name="openid"/>
+                            </li>
+                            <li>
+                                <label>微信昵称：</label>
+                                <input type="text" name="wxName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/barUser";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                modalName: "bar用户",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '唯一主键',
+                    visible: false
+                },
+                {
+                    field: 'openid',
+                    title: 'OpenId'
+                },
+                {
+                    field: 'wxName',
+                    title: '微信昵称'
+                },
+                {
+                    field: 'wxAvatar',
+                    title: '微信头像',
+                    formatter: function(value, row, index) {
+                   	 return $.table.imageView(value, 50,50 , 'self',false);
+                   }
+                },
+                {
+                    field: 'loginTime',
+                    title: '最近一次登录时间'
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

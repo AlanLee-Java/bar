@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('商家管理列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>商家名称：</label>
+                                <input type="text" name="name"/>
+                            </li>
+                            <li>
+                                <label>商家城市：</label>
+                                <input type="text" name="city"/>
+                            </li>
+                            <li>
+                                <label>联系方式：</label>
+                                <input type="text" name="contact"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:merchant:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:merchant:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:merchant:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:merchant:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:merchant:remove')}]];
+        var prefix = ctx + "system/merchant";
+		var weekArr = ['','周一','周二','周三','周四','周五','周六','周日']
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                modalName: "商家管理",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '商户编号',
+                    visible: true
+                },
+                {
+                    field: 'name',
+                    title: '名称'
+                },
+                {
+                    field: 'logo',
+                    title: 'LOGO',
+                    formatter: function(value, row, index) {
+                    	 return $.table.imageView(value, 220,150 , 'self',false);
+                    }
+                },
+                {
+                    field: 'city',
+                    title: '所属城市'
+                },
+                {
+                    field: 'address',
+                    title: '商家地址'
+                },
+                {
+                    field: 'startDay',
+                    title: '营业时间',
+                    formatter: function(value, row, index) {
+                   	 return weekArr[parseInt(row.startDay)] + " 至 " + weekArr[parseInt(row.endDay)] +"  " + row.startTime + " ~ " + row.endTime;
+                   }
+                },
+                {
+                    field: 'contact',
+                    title: '联系方式'
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    field: 'sysUserId',
+                    title: '绑定用户',
+                    formatter: function(value, row, index) {
+                      	 if(value){
+                      		 return row.sysUserName + '(' + value + ')';
+                      	 }else{
+                      		 return "<span style='color:red'>未绑定账号</span>"
+                      	 }
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-info btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="tops(' + row.id + ',\'' + row.name + '\')"><i class="fa fa-edit"></i>设置话题</a> ');
+                        actions.push('<a class="btn btn-info btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="selectUser(\'' + row.id + '\')"><i class="fa fa-edit"></i>绑定账号</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+		
+		 function tops(id,name){
+	        	$.modal.openTab( '设置话题：'+name,ctx + "system/merchantTopic?id=" + id +"&name="+name,false)
+	     }
+		 
+		 /* 分配用户-选择用户 */
+		function selectUser(id) {
+			var url = prefix + '/selectUser/' + id;
+			$.modal.open("选择用户", url);
+		}
+    </script>
+</body>
+</html>

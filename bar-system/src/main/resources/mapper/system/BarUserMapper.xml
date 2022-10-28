@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BarUserMapper">
+    
+    <resultMap type="BarUser" id="BarUserResult">
+        <result property="id"    column="id"    />
+        <result property="openid"    column="openid"    />
+        <result property="sessionKey"    column="session_key"    />
+        <result property="unionid"    column="unionid"    />
+        <result property="wxName"    column="wx_name"    />
+        <result property="wxAvatar"    column="wx_avatar"    />
+        <result property="salt"    column="salt"    />
+        <result property="accessToken"    column="access_token"    />
+        <result property="accessTokenTime"    column="access_token_time"    />
+        <result property="loginTime"    column="login_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBarUserVo">
+        select id, openid, session_key, unionid, wx_name, wx_avatar, salt, access_token, access_token_time, login_time, create_time, update_time from bar_user
+    </sql>
+
+    <select id="selectBarUserList" parameterType="BarUser" resultMap="BarUserResult">
+        <include refid="selectBarUserVo"/>
+        <where>  
+            <if test="openid != null  and openid != ''"> and openid = #{openid}</if>
+            <if test="unionid != null  and unionid != ''"> and unionid = #{unionid}</if>
+            <if test="wxName != null  and wxName != ''"> and wx_name like concat('%', #{wxName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectBarUserById" parameterType="Long" resultMap="BarUserResult">
+        <include refid="selectBarUserVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBarUser" parameterType="BarUser" useGeneratedKeys="true" keyProperty="id">
+        insert into bar_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="openid != null and openid != ''">openid,</if>
+            <if test="sessionKey != null">session_key,</if>
+            <if test="unionid != null">unionid,</if>
+            <if test="wxName != null">wx_name,</if>
+            <if test="wxAvatar != null">wx_avatar,</if>
+            <if test="salt != null">salt,</if>
+            <if test="accessToken != null">access_token,</if>
+            <if test="accessTokenTime != null">access_token_time,</if>
+            <if test="loginTime != null">login_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openid != null and openid != ''">#{openid},</if>
+            <if test="sessionKey != null">#{sessionKey},</if>
+            <if test="unionid != null">#{unionid},</if>
+            <if test="wxName != null">#{wxName},</if>
+            <if test="wxAvatar != null">#{wxAvatar},</if>
+            <if test="salt != null">#{salt},</if>
+            <if test="accessToken != null">#{accessToken},</if>
+            <if test="accessTokenTime != null">#{accessTokenTime},</if>
+            <if test="loginTime != null">#{loginTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBarUser" parameterType="BarUser">
+        update bar_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="openid != null and openid != ''">openid = #{openid},</if>
+            <if test="sessionKey != null">session_key = #{sessionKey},</if>
+            <if test="unionid != null">unionid = #{unionid},</if>
+            <if test="wxName != null">wx_name = #{wxName},</if>
+            <if test="wxAvatar != null">wx_avatar = #{wxAvatar},</if>
+            <if test="salt != null">salt = #{salt},</if>
+            <if test="accessToken != null">access_token = #{accessToken},</if>
+            <if test="accessTokenTime != null">access_token_time = #{accessTokenTime},</if>
+            <if test="loginTime != null">login_time = #{loginTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBarUserById" parameterType="Long">
+        delete from bar_user where id = #{id}
+    </delete>
+
+    <delete id="deleteBarUserByIds" parameterType="String">
+        delete from bar_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

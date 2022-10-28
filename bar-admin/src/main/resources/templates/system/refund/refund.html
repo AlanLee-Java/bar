@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('退款单列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>退款号：</label>
+                                <input type="text" name="refundNo"/>
+                            </li>
+                            <li>
+                                <label>用户ID：</label>
+                                <input type="text" name="userId"/>
+                            </li>
+                            <li>
+                                <label>商户ID：</label>
+                                <input type="text" name="merchantId"/>
+                            </li>
+                            <li>
+                                <label>订单号：</label>
+                                <input type="text" name="orderNo"/>
+                            </li>
+                            <li>
+                                <label>退款单号：</label>
+                                <input type="text" name="tradeNo"/>
+                            </li>
+                            <li class="select-time">
+                                <label>创建时间：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginCreateTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endCreateTime]"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:refund:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/refund";
+        var refundStatusDatas = [[${@dict.getType('refund_status')}]];
+        var viewFlag = [[${@permission.hasPermi('system:refund:view')}]];
+        
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                exportUrl: prefix + "/export",
+                modalName: "退款单",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '唯一主键',
+                    visible: false
+                },
+                {
+                    field: 'refundNo',
+                    title: '退款号'
+                },
+                {
+                    field: 'userId',
+                    title: '微信用户',
+                    formatter: function(value, row, index) {
+                        return row.userName + " ("+value+")";
+                     }
+                },
+                {
+                    field: 'merchantName',
+                    title: '商家信息',
+                    formatter: function(value, row, index) {
+                    	if(!value){
+                    		return "-";
+                    	}
+                    	return value + " ("+row.merchantId+")";
+                    }
+                },
+                {
+                    field: 'orderNo',
+                    title: '订单号',
+                    formatter: function(value, row, index) {
+                    	if(value){
+                    		 return '<a href="javascript:viewOrder('+row.id+')">' + value+ '</a>';
+                    	}else{
+                    		return "-";
+                    	}
+                       
+                    }
+                },
+                {
+                    field: 'refundAmount',
+                    title: '退款金额',
+                    formatter: function(value, row, index) {
+                        return "￥ " + value;
+                    }
+                },
+                {
+                    field: 'tradeNo',
+                    title: '退款单号'
+                },
+                {
+                    field: 'reason',
+                    title: '退款原因'
+                },
+                {
+                    field: 'reasonDetail',
+                    title: '退款说明'
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    field: 'status',
+                    title: '退款状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(refundStatusDatas, value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + viewFlag + '" href="javascript:void(0)" onclick="view(\'' + row.id + '\')"><i class="fa fa-edit"></i>详情</a> ');
+                    	return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+        
+        /* 查询退款订单 */
+        function view(id){
+        	$.modal.open("退款单详情", prefix + "/view/"+id , null , null,function(index, layero) {
+        		$.modal.close(index);
+            });
+        }
+        
+        /* 查询订单 */
+        function viewOrder(id){
+        	$.modal.open("订单详情", ctx + "system/orders/view/"+id , null , null,function(index, layero) {
+        		$.modal.close(index);
+            });
+        }
+    </script>
+</body>
+</html>

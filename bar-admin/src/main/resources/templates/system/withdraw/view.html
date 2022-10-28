@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('订单信息')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-refund-edit" th:object="${withdraw}">
+            
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">商户信息：</label>
+                <div class="col-sm-8">
+                    <label class="control-label">[[*{merchantName}]] ([[*{merchantId}]])</label>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">申请时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                    	<label class="control-label">[[${#dates.format(withdraw.createTime, 'yyyy-MM-dd HH:mm:ss')}]]</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">提现类型：</label>
+                <div class="col-sm-8" th:with="type=${@dict.getType('withdraw_type')}" >
+                    <label th:each="dict : ${type}" th:if="${dict.dictValue == withdraw.withdrawType+''}" class="control-label">[[${dict.dictLabel}]]</label>
+                </div>
+            </div>
+            <div class="form-group" th:if="${withdraw.withdrawType == 1}">    
+                <label class="col-sm-3 control-label">微信号：</label>
+                <div class="col-sm-8">
+                 	<label class="control-label">[[*{wechatId}]]</label>
+                </div>
+            </div>
+            <div class="form-group" th:if="${withdraw.withdrawType == 2}">    
+                <label class="col-sm-3 control-label">支付宝号：</label>
+                <div class="col-sm-8">
+                	<label class="control-label">[[*{alipayId}]]</label>
+                </div>
+            </div>
+            <div class="form-group" th:if="${withdraw.withdrawType == 3}">        
+                <label class="col-sm-3 control-label">收账姓名：</label>
+                <div class="col-sm-8">
+                    <label class="control-label">[[*{collectionName}]]</label>
+                </div>
+            </div>
+            <div class="form-group" th:if="${withdraw.withdrawType == 3}">        
+                <label class="col-sm-3 control-label">收账卡号：</label>
+                <div class="col-sm-8">
+                    <label class="control-label">[[*{collectionCardNo}]]</label>
+                </div>
+            </div>
+            <div class="form-group" th:if="${withdraw.withdrawType == 3}">        
+                <label class="col-sm-3 control-label">收账银行：</label>
+                <div class="col-sm-8">
+                    <label class="control-label">[[*{collectionBank}]]</label>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">提现金额：</label>
+                <div class="col-sm-8">
+                    <label class="control-label">￥[[*{amount}]]</label>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">提现备注：</label>
+                <div class="col-sm-8">
+                    <label class="control-label">[[*{remark}]]</label>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label ">提现状态：</label>
+                <div class="col-sm-8" th:with="type=${@dict.getType('withdraw_status')}" >
+	               <label th:each="dict : ${type}" th:if="${dict.dictValue == withdraw.status+''}" class="control-label">[[${dict.dictLabel}]]</label>
+	            </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label " >处理人：</label>
+                <div class="col-sm-8">
+                    <label class="control-label">[[*{handleBy}]]</label>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">处理时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                    	<label class="control-label">[[${#dates.format(withdraw.handleTime, 'yyyy-MM-dd HH:mm:ss')}]]</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">处理备注：</label>
+                <div class="col-sm-8">
+                    <label class="control-label">[[*{handleRemark}]]</label>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">提现凭证图片：</label>
+                <div class="col-sm-5">
+                    <a href="javascript:void(0)" class="thumbnail">
+				          <img class='img-circle2 img-xs' data-height='600'  data-width='auto' data-target='self' alt="100%x180" style="height: 280px; width: 220px; display: block;" th:src="${withdraw.proof}" data-holder-rendered="true">
+				   </a>
+                </div>
+            </div>
+            
+            
+           
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+    $("#form-refund-edit").off("click").on("click", '.img-circle2', function() {
+        var src = $(this).attr('src');
+        var target = $(this).data('target');
+        if($.common.equals("self", target)) {
+            var height = $(this).data('height');
+            var width = $(this).data('width');
+            // 如果是移动端，就使用自适应大小弹窗
+            if ($.common.isMobile()) {
+                width = 'auto';
+                height = 'auto';
+            }
+            layer.open({
+                title: false,
+                type: 1,
+                closeBtn: true,
+                shadeClose: true,
+                area: ['auto', 'auto'],
+                content: "<img src='" + src + "' height='" + height + "' width='" + width + "'/>"
+            });
+        } else if ($.common.equals("blank", target)) {
+            window.open(src);
+        }
+    });
+    </script>
+</body>
+</html>

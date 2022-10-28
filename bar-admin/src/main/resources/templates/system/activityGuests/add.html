@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增活动嘉宾')" />
+    <th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-activityGuests-add">
+             <input name="activityId" class="form-control" th:value="${id}" type="hidden" required>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">嘉宾名字：</label>
+                <div class="col-sm-8">
+                    <input name="name" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">嘉宾图片：</label>
+                <div class="col-sm-8">
+                    <input type="hidden" name="picture">
+                    <div class="file-loading">
+                        <input class="form-control file-upload" id="picture" name="file" type="file">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: bootstrap-fileinput-js"/>
+    <script th:inline="javascript">
+        var prefix = ctx + "system/activityGuests"
+        $("#form-activityGuests-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+            	//判断图片上传
+            	var logo =  $("input[name='picture']").val();
+            	if(!logo){
+            		$.modal.alertError("请上传图片！");
+            		return;
+            	}
+                $.operate.save(prefix + "/add", $('#form-activityGuests-add').serialize());
+            }
+        }
+
+        $(".file-upload").fileinput({
+            uploadUrl: ctx + 'common/upload',
+            maxFileCount: 1,
+            autoReplace: true
+        }).on('fileuploaded', function (event, data, previewId, index) {
+            $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
+        }).on('fileremoved', function (event, id, index) {
+            $("input[name='" + event.currentTarget.id + "']").val('')
+        })
+    </script>
+</body>
+</html>

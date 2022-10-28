@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ActivityRefundRuleMapper">
+
+    <resultMap type="ActivityRefundRule" id="ActivityRefundRuleResult">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="activityId" column="activity_id"/>
+        <result property="refundTime" column="refund_time"/>
+        <result property="conditionType" column="condition_type"/>
+        <result property="isAllow" column="is_allow"/>
+        <result property="refundRate" column="refund_rate"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectActivityRefundRuleVo">
+        select id,
+               merchant_id,
+               activity_id,
+               refund_time,
+               condition_type,
+               is_allow,
+               refund_rate,
+               create_by,
+               create_time,
+               update_by,
+               update_time
+        from activity_refund_rule
+    </sql>
+
+    <select id="selectActivityRefundRuleList" parameterType="ActivityRefundRule" resultMap="ActivityRefundRuleResult">
+        <include refid="selectActivityRefundRuleVo"/>
+        <where>
+            <if test="activityId != null ">and activity_id = #{activityId}</if>
+        </where>
+    </select>
+
+    <select id="selectActivityRefundRuleById" parameterType="Long" resultMap="ActivityRefundRuleResult">
+        <include refid="selectActivityRefundRuleVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertActivityRefundRule" parameterType="ActivityRefundRule" useGeneratedKeys="true" keyProperty="id">
+        insert into activity_refund_rule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id,</if>
+            <if test="activityId != null">activity_id,</if>
+            <if test="refundTime != null">refund_time,</if>
+            <if test="conditionType != null">condition_type,</if>
+            <if test="isAllow != null">is_allow,</if>
+            <if test="refundRate != null">refund_rate,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">#{merchantId},</if>
+            <if test="activityId != null">#{activityId},</if>
+            <if test="refundTime != null">#{refundTime},</if>
+            <if test="conditionType != null">#{conditionType},</if>
+            <if test="isAllow != null">#{isAllow},</if>
+            <if test="refundRate != null">#{refundRate},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateActivityRefundRule" parameterType="ActivityRefundRule">
+        update activity_refund_rule
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id = #{merchantId},</if>
+            <if test="activityId != null">activity_id = #{activityId},</if>
+            <if test="refundTime != null">refund_time = #{refundTime},</if>
+            <if test="conditionType != null">condition_type = #{conditionType},</if>
+            <if test="isAllow != null">is_allow = #{isAllow},</if>
+            <if test="refundRate != null">refund_rate = #{refundRate},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteActivityRefundRuleById" parameterType="Long">
+        delete
+        from activity_refund_rule
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteActivityRefundRuleByIds" parameterType="String">
+        delete from activity_refund_rule where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

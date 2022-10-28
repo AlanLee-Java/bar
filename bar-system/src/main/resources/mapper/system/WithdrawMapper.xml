@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.WithdrawMapper">
+
+    <resultMap type="Withdraw" id="WithdrawResult">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+         <result property="merchantName" column="merchantName"/>
+        <result property="wechatId" column="wechat_id"/>
+        <result property="alipayId" column="alipay_id"/>
+        <result property="collectionName" column="collection_name"/>
+        <result property="collectionCardNo" column="collection_card_no"/>
+        <result property="collectionBank" column="collection_bank"/>
+        <result property="withdrawType" column="withdraw_type"/>
+        <result property="amount" column="amount"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="handleBy" column="handle_by"/>
+        <result property="handleTime" column="handle_time"/>
+        <result property="handleRemark" column="handle_remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="proof" column="proof"/> 
+    </resultMap>
+
+    <sql id="selectWithdrawVo">
+        select id,
+               merchant_id,
+               wechat_id,
+               alipay_id,
+               collection_name,
+               collection_card_no,
+               collection_bank,
+               withdraw_type,
+               amount,
+               status,
+               remark,
+               handle_by,
+               handle_time,
+               handle_remark,
+               proof,
+               create_by,
+               create_time,
+               ( SELECT `name` FROM  merchant Where id = merchant_id ) as merchantName ,
+               update_by,
+               update_time
+        from withdraw
+    </sql>
+
+    <select id="selectWithdrawList" parameterType="Withdraw" resultMap="WithdrawResult">
+        <include refid="selectWithdrawVo"/>
+        <where>
+            <if test="merchantId != null ">and merchant_id = #{merchantId}</if>
+            <if test="wechatId != null  and wechatId != ''">and wechat_id = #{wechatId}</if>
+            <if test="alipayId != null  and alipayId != ''">and alipay_id = #{alipayId}</if>
+            <if test="collectionName != null  and collectionName != ''">and collection_name like concat('%',
+                #{collectionName}, '%')
+            </if>
+            <if test="collectionCardNo != null  and collectionCardNo != ''">and collection_card_no =
+                #{collectionCardNo}
+            </if>
+            <if test="collectionBank != null  and collectionBank != ''">and collection_bank = #{collectionBank}</if>
+            <if test="withdrawType != null ">and withdraw_type = #{withdrawType}</if>
+            <if test="amount != null ">and amount = #{amount}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="handleBy != null  and handleBy != ''">and handle_by = #{handleBy}</if>
+            <if test="handleTime != null ">and handle_time = #{handleTime}</if>
+            <if test="handleRemark != null  and handleRemark != ''">and handle_remark = #{handleRemark}</if>
+        </where>
+    </select>
+
+    <select id="selectWithdrawById" parameterType="Long" resultMap="WithdrawResult">
+        <include refid="selectWithdrawVo"/>
+        where id = #{id}
+    </select>
+
+    <!-- 根据商家ID查询提现中的提现 -->
+    <select id="selectWithdrawByMerchantId" parameterType="Long" resultMap="WithdrawResult">
+        <include refid="selectWithdrawVo"/>
+        where merchant_id = #{merchantId} AND status = 0
+    </select>
+
+    <insert id="insertWithdraw" parameterType="Withdraw" useGeneratedKeys="true" keyProperty="id">
+        insert into withdraw
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id,</if>
+            <if test="wechatId != null">wechat_id,</if>
+            <if test="alipayId != null">alipay_id,</if>
+            <if test="collectionName != null">collection_name,</if>
+            <if test="collectionCardNo != null">collection_card_no,</if>
+            <if test="collectionBank != null">collection_bank,</if>
+            <if test="withdrawType != null">withdraw_type,</if>
+            <if test="amount != null">amount,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="proof != null">proof,</if>
+            <if test="handleBy != null">handle_by,</if>
+            <if test="handleTime != null">handle_time,</if>
+            <if test="handleRemark != null">handle_remark,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">#{merchantId},</if>
+            <if test="wechatId != null">#{wechatId},</if>
+            <if test="alipayId != null">#{alipayId},</if>
+            <if test="collectionName != null">#{collectionName},</if>
+            <if test="collectionCardNo != null">#{collectionCardNo},</if>
+            <if test="collectionBank != null">#{collectionBank},</if>
+            <if test="withdrawType != null">#{withdrawType},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="proof != null">#{proof},</if>
+            <if test="handleBy != null">#{handleBy},</if>
+            <if test="handleTime != null">#{handleTime},</if>
+            <if test="handleRemark != null">#{handleRemark},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateWithdraw" parameterType="Withdraw">
+        update withdraw
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id = #{merchantId},</if>
+            <if test="wechatId != null">wechat_id = #{wechatId},</if>
+            <if test="alipayId != null">alipay_id = #{alipayId},</if>
+            <if test="collectionName != null">collection_name = #{collectionName},</if>
+            <if test="collectionCardNo != null">collection_card_no = #{collectionCardNo},</if>
+            <if test="collectionBank != null">collection_bank = #{collectionBank},</if>
+            <if test="withdrawType != null">withdraw_type = #{withdrawType},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="handleBy != null">handle_by = #{handleBy},</if>
+            <if test="handleTime != null">handle_time = #{handleTime},</if>
+            <if test="handleRemark != null">handle_remark = #{handleRemark},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="proof != null">proof = #{proof},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWithdrawById" parameterType="Long">
+        delete
+        from withdraw
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteWithdrawByIds" parameterType="String">
+        delete from withdraw where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

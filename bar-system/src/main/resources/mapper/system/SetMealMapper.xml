@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SetMealMapper">
+
+    <resultMap type="SetMeal" id="SetMealResult">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="picture" column="picture"/>
+        <result property="notice" column="notice"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <association javaType="Goods"  property="good" resultMap="GoodsResult"></association>
+    </resultMap>
+    
+    <resultMap type="Goods" id="GoodsResult">
+        <result property="id"    column="id"    />
+        <result property="merchantId"    column="merchant_id_g"    />
+        <result property="type"    column="type"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <result property="price"    column="price"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectSetMealVo">
+       select sm.id,
+               sm.merchant_id,
+               sm.goods_id,
+               sm.picture,
+               sm.notice,
+               sm.create_by,
+               sm.create_time,
+               sm.update_by,
+               sm.update_time,
+        g.merchant_id as merchant_id_g, g.type, g.`name`, g.description, g.price, g.quantity, g.`status`,m.`name` as merchantName
+
+        from set_meal sm JOIN goods g On sm.goods_id = g.id
+				LEFT JOIN merchant m ON sm.merchant_id = m.id 
+    </sql>
+
+    <select id="selectSetMealList" parameterType="SetMeal" resultMap="SetMealResult">
+       	<include refid="selectSetMealVo"/>
+        <where>
+        	<if test="merchantId != null">and sm.merchant_id = #{merchantId}</if>
+            <if test="goodsId != null ">and sm.goods_id = #{goodsId}</if>
+        </where>
+    </select>
+
+    <select id="selectSetMealById" parameterType="Long" resultMap="SetMealResult">
+        <include refid="selectSetMealVo"/>
+        where sm.id = #{id}
+    </select>
+
+    <insert id="insertSetMeal" parameterType="SetMeal" useGeneratedKeys="true" keyProperty="id">
+        insert into set_meal
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id,</if>
+            <if test="goodsId != null">goods_id,</if>
+            <if test="picture != null and picture != ''">picture,</if>
+            <if test="notice != null">notice,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="merchantId != null">#{merchantId},</if>
+            <if test="goodsId != null">#{goodsId},</if>
+            <if test="picture != null and picture != ''">#{picture},</if>
+            <if test="notice != null">#{notice},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSetMeal" parameterType="SetMeal">
+        update set_meal
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="merchantId != null">merchant_id = #{merchantId},</if>
+            <if test="goodsId != null">goods_id = #{goodsId},</if>
+            <if test="picture != null and picture != ''">picture = #{picture},</if>
+            <if test="notice != null">notice = #{notice},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSetMealById" parameterType="Long">
+        delete
+        from set_meal
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteSetMealByIds" parameterType="String">
+        delete from set_meal where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

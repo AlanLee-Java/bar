@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.applet.mapper.BrowseHistoryMapper">
+
+    <select id="queryBrowseHistoryPage" resultType="com.ruoyi.applet.model.vo.BrowseHistoryQueryVO">
+        SELECT
+            bh.id AS id,
+            bh.user_id as userId,
+            bh.type AS type,
+            bh.object_id AS objectId,
+            bh.create_time AS createTime,
+            DATE_FORMAT( bh.create_time, '%Y-%m-%d' ) AS date
+        FROM
+            browse_history bh
+        <where>
+            <if test="userId != null">
+                bh.user_id = #{userId}
+            </if>
+            <if test="type != null">
+                AND bh.type = #{type}
+            </if>
+        </where>
+        GROUP BY
+            DATE_FORMAT( bh.create_time, '%Y-%m-%d' ),
+            bh.id
+        ORDER BY
+            bh.create_time DESC
+    </select>
+
+</mapper>

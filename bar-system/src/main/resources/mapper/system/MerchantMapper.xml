@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.MerchantMapper">
+
+    <resultMap type="Merchant" id="MerchantResult">
+        <result property="id" column="id"/>
+        <result property="balance" column="balance"/>
+        <result property="wechatId" column="wechat_id"/>
+        <result property="alipayId" column="alipay_id"/>
+        <result property="collectionName" column="collection_name"/>
+        <result property="collectionCardNo" column="collection_card_no"/>
+        <result property="collectionBank" column="collection_bank"/>
+        <result property="type" column="type"/>
+        <result property="name" column="name"/>
+        <result property="logo" column="logo"/>
+        <result property="city" column="city"/>
+        <result property="address" column="address"/>
+        <result property="description" column="description"/>
+        <result property="startDay" column="start_day"/>
+        <result property="endDay" column="end_day"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="contact" column="contact"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="sysUserName" column="sysUserName"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectMerchantVo">
+        select id,
+               balance,
+               wechat_id,
+               alipay_id,
+               collection_name,
+               collection_card_no,
+               collection_bank,
+               type,
+               name,
+               logo,
+               city,
+               address,
+               description,
+               start_day,
+               end_day,
+               start_time,
+               end_time,
+               contact,
+               sys_user_id,
+               create_by,
+               create_time,
+               update_by,
+               update_time
+        from merchant
+    </sql>
+
+    <select id="selectMerchantList" parameterType="Merchant" resultMap="MerchantResult">
+        select id,
+        type, name, logo, city, address, description,
+        start_day,end_day,start_time,
+        end_time,contact,sys_user_id,create_by,create_time,update_by,update_time,
+        (SELECT login_name FROM sys_user WHERE user_id = sys_user_id ) as sysUserName
+        from merchant
+        <where>
+            <if test="type != null ">and type = #{type}</if>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="city != null  and city != ''">and city = #{city}</if>
+            <if test="contact != null  and contact != ''">and contact = #{contact}</if>
+        </where>
+    </select>
+
+    <select id="selectMerchantById" parameterType="Long" resultMap="MerchantResult">
+        <include refid="selectMerchantVo"/>
+        where id = #{id}
+    </select>
+
+    <!-- 根据商家管理员ID获取商家信息 -->
+    <select id="getBySysUserId" resultMap="MerchantResult">
+        <include refid="selectMerchantVo"/>
+        where sys_user_id = #{sysUserId}
+    </select>
+
+    <!-- 根据商家管理员ID获取商家ID -->
+    <select id="getIdByUserId" resultType="Long">
+        select id
+        from merchant
+        where sys_user_id = #{sysUserId}
+    </select  >
+    
+    <!-- 根据商户id 查询订单统计 -->
+    <select id="selectMerchantSumOrder" parameterType="Long"  resultType="Map" >
+    	SELECT 
+		(SELECT COUNT(id) FROM orders WHERE merchant_id = #{id} AND `status` in (1,2) AND MONTH(create_time) = MONTH(NOW())) as orderMonthNum,
+		(SELECT COUNT(id) FROM orders WHERE merchant_id = #{id} AND `status` in (1,2) AND YEAR(create_time) = YEAR(NOW())) as orderYearNum,
+		(SELECT COUNT(id) FROM refund WHERE merchant_id = #{id} AND MONTH(create_time) = MONTH(NOW())) as refundNum
+    </select>
+
+
+    <insert id="insertMerchant" parameterType="Merchant" useGeneratedKeys="true" keyProperty="id">
+        insert into merchant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null">type,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="logo != null and logo != ''">logo,</if>
+            <if test="city != null and city != ''">city,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="description != null">description,</if>
+            <if test="startDay != null">start_day,</if>
+            <if test="endDay != null">end_day,</if>
+            <if test="startTime != null and startTime != ''">start_time,</if>
+            <if test="endTime != null and endTime != ''">end_time,</if>
+            <if test="contact != null and contact != ''">contact,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null">#{type},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="logo != null and logo != ''">#{logo},</if>
+            <if test="city != null and city != ''">#{city},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="description != null">#{description},</if>
+            <if test="startDay != null">#{startDay},</if>
+            <if test="endDay != null">#{endDay},</if>
+            <if test="startTime != null and startTime != ''">#{startTime},</if>
+            <if test="endTime != null and endTime != ''">#{endTime},</if>
+            <if test="contact != null and contact != ''">#{contact},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMerchant" parameterType="Merchant">
+        update merchant
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null">type = #{type},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="logo != null and logo != ''">logo = #{logo},</if>
+            <if test="city != null and city != ''">city = #{city},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="startDay != null">start_day = #{startDay},</if>
+            <if test="endDay != null">end_day = #{endDay},</if>
+            <if test="startTime != null and startTime != ''">start_time = #{startTime},</if>
+            <if test="endTime != null and endTime != ''">end_time = #{endTime},</if>
+            <if test="contact != null and contact != ''">contact = #{contact},</if>
+            <if test="sysUserId != null">sys_user_id = #{sysUserId},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+             <if test="wechatId != null and wechatId != ''" > wechat_id = #{wechatId},</if>
+         	<if test="alipayId != null and alipayId != ''" > alipay_id = #{alipayId},</if>
+         	<if test="collectionName != null and collectionName != ''" > collection_name = #{collectionName},</if>
+         	<if test="collectionCardNo != null and collectionCardNo != ''" > collection_card_no = #{collectionCardNo},</if>
+         	<if test="collectionBank != null and collectionBank != ''" > collection_bank = #{collectionBank},</if>
+         	<if test="balance != null " > balance = #{balance},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMerchantById" parameterType="Long">
+        delete
+        from merchant
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteMerchantByIds" parameterType="String">
+        delete from merchant where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
