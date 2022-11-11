@@ -1,9 +1,10 @@
 package com.ruoyi.system.domain;
 
-import com.ruoyi.common.core.domain.BaseEntity;
-import lombok.Data;
-
 import java.math.BigDecimal;
+
+import com.ruoyi.common.core.domain.BaseEntity;
+
+import lombok.Data;
 
 /**
  * 商家管理对象 merchant
@@ -60,6 +61,11 @@ public class Merchant extends BaseEntity {
      * 提现类型：1.微信，2支付宝，3银行卡
      */
     private Integer type;
+    
+    /**
+     * 商户关键字：1酒吧，2夜店，3livehouse
+     */
+    private Integer typeKey;
 
     /**
      * 商家名称

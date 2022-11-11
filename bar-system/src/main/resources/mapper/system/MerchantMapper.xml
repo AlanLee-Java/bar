@@ -13,6 +13,7 @@
         <result property="collectionCardNo" column="collection_card_no"/>
         <result property="collectionBank" column="collection_bank"/>
         <result property="type" column="type"/>
+        <result property="typeKey" column="type_key"/>
         <result property="name" column="name"/>
         <result property="logo" column="logo"/>
         <result property="city" column="city"/>
@@ -40,6 +41,7 @@
                collection_card_no,
                collection_bank,
                type,
+               type_key,
                name,
                logo,
                city,
@@ -59,7 +61,7 @@
     </sql>
 
     <select id="selectMerchantList" parameterType="Merchant" resultMap="MerchantResult">
-        select id,
+        select id,type_key,
         type, name, logo, city, address, description,
         start_day,end_day,start_time,
         end_time,contact,sys_user_id,create_by,create_time,update_by,update_time,
@@ -104,6 +106,7 @@
         insert into merchant
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="type != null">type,</if>
+            <if test="typeKey != null">type_key,</if> 
             <if test="name != null and name != ''">name,</if>
             <if test="logo != null and logo != ''">logo,</if>
             <if test="city != null and city != ''">city,</if>
@@ -121,6 +124,7 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="type != null">#{type},</if>
+            <if test="typeKey != null">#{typeKey},</if> 
             <if test="name != null and name != ''">#{name},</if>
             <if test="logo != null and logo != ''">#{logo},</if>
             <if test="city != null and city != ''">#{city},</if>
@@ -163,6 +167,7 @@
          	<if test="collectionCardNo != null and collectionCardNo != ''" > collection_card_no = #{collectionCardNo},</if>
          	<if test="collectionBank != null and collectionBank != ''" > collection_bank = #{collectionBank},</if>
          	<if test="balance != null " > balance = #{balance},</if>
+         	<if test="typeKey != null">type_Key = #{typeKey},</if> 
         </trim>
         where id = #{id}
     </update>

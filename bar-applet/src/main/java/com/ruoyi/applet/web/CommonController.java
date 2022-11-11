@@ -1,14 +1,12 @@
 package com.ruoyi.applet.web;
 
-import com.ruoyi.applet.config.DomainConfig;
-import com.ruoyi.applet.config.RuoYiAppletConfig;
-import com.ruoyi.applet.support.utils.FileUploadUtils;
-import com.ruoyi.common.core.domain.AppletResult;
-import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.file.FileUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,11 +15,16 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.ruoyi.applet.config.DomainConfig;
+import com.ruoyi.applet.config.RuoYiAppletConfig;
+import com.ruoyi.applet.support.utils.FileUploadUtils;
+import com.ruoyi.common.core.domain.AppletResult;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.file.FileUtils;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 通用请求处理

@@ -10,6 +10,7 @@ import com.ruoyi.applet.service.*;
 import com.ruoyi.common.core.domain.AppletResult;
 import com.ruoyi.common.enums.GoodsStatus;
 import com.ruoyi.common.enums.GoodsType;
+import com.ruoyi.common.enums.MerchantKey;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
 import io.swagger.annotations.Api;
@@ -82,11 +83,33 @@ public class MerchantController {
                 merchantQueryWrapper.eq("city", merchantQueryDTO.getCity());
             }
             if (StringUtils.isNotBlank(merchantQueryDTO.getName())) {
-                merchantQueryWrapper.like("name", merchantQueryDTO.getName());
+               
+				if (MerchantKey.JIUDIAN.getName().equals(merchantQueryDTO.getName())) {
+					merchantQueryWrapper.and(wrapper -> wrapper.like("name", merchantQueryDTO.getName()).or()
+							.eq("type_key", MerchantKey.JIUDIAN.getType()));
+				} else if (MerchantKey.YEDIAN.getName().equals(merchantQueryDTO.getName())) {
+
+					merchantQueryWrapper.and(wrapper -> wrapper.like("name", merchantQueryDTO.getName()).or()
+							.eq("type_key", MerchantKey.YEDIAN.getType()));
+				} else if (MerchantKey.LIVE_HOUSE.getName().toUpperCase().equals(merchantQueryDTO.getName().toUpperCase())) {
+					merchantQueryWrapper.and(wrapper -> wrapper.like("name", merchantQueryDTO.getName()).or()
+							.eq("type_key", MerchantKey.LIVE_HOUSE.getType()));
+				} else {
+					merchantQueryWrapper.like("name", merchantQueryDTO.getName());
+				}
             }
         }
         Page<Merchant> merchantPage = merchantService.page(page, merchantQueryWrapper);
         for (Merchant merchant : merchantPage.getRecords()) {
+        	//显示标签
+			if (merchant.getTypeKey() == MerchantKey.JIUDIAN.getType()) {
+				merchant.setTypeKeyName(MerchantKey.JIUDIAN.getDesc());
+			} else if (merchant.getTypeKey() == MerchantKey.YEDIAN.getType()) {
+				merchant.setTypeKeyName(MerchantKey.YEDIAN.getDesc());
+			} else if (merchant.getTypeKey() == MerchantKey.LIVE_HOUSE.getType()) {
+				merchant.setTypeKeyName(MerchantKey.LIVE_HOUSE.getDesc());
+			}
+			
             // 查询商家话题
             QueryWrapper<MerchantTopic> merchantTopicQueryWrapper = new QueryWrapper<>();
             merchantTopicQueryWrapper.eq("merchant_id", merchant.getId());
@@ -112,6 +135,14 @@ public class MerchantController {
         if (!Optional.ofNullable(merchant).isPresent()) {
             throw new ServiceException("商家不存在");
         }
+		// 显示标签
+		if (merchant.getTypeKey() == MerchantKey.JIUDIAN.getType()) {
+			merchant.setTypeKeyName(MerchantKey.JIUDIAN.getDesc());
+		} else if (merchant.getTypeKey() == MerchantKey.YEDIAN.getType()) {
+			merchant.setTypeKeyName(MerchantKey.YEDIAN.getDesc());
+		} else if (merchant.getTypeKey() == MerchantKey.LIVE_HOUSE.getType()) {
+			merchant.setTypeKeyName(MerchantKey.LIVE_HOUSE.getDesc());
+		}
         // 查询商家话题
         QueryWrapper<MerchantTopic> merchantTopicQueryWrapper = new QueryWrapper<>();
         merchantTopicQueryWrapper.eq("merchant_id", merchant.getId());
@@ -185,6 +216,14 @@ public class MerchantController {
     public AppletResult packageList(@RequestParam("merchantId") Long merchantId) {
         // 获取商家信息
         Merchant merchant = merchantService.getById(merchantId);
+		// 显示标签
+		if (merchant.getTypeKey() == MerchantKey.JIUDIAN.getType()) {
+			merchant.setTypeKeyName(MerchantKey.JIUDIAN.getDesc());
+		} else if (merchant.getTypeKey() == MerchantKey.YEDIAN.getType()) {
+			merchant.setTypeKeyName(MerchantKey.YEDIAN.getDesc());
+		} else if (merchant.getTypeKey() == MerchantKey.LIVE_HOUSE.getType()) {
+			merchant.setTypeKeyName(MerchantKey.LIVE_HOUSE.getDesc());
+		}
         if (!Optional.ofNullable(merchant).isPresent()) {
             throw new ServiceException("商家不存在");
         }
@@ -237,6 +276,14 @@ public class MerchantController {
     public AppletResult packageDetail(@RequestParam("merchantId") Long merchantId, @RequestParam("goodsId") Long goodsId) {
         // 获取商家信息
         Merchant merchant = merchantService.getById(merchantId);
+		// 显示标签
+		if (merchant.getTypeKey() == MerchantKey.JIUDIAN.getType()) {
+			merchant.setTypeKeyName(MerchantKey.JIUDIAN.getDesc());
+		} else if (merchant.getTypeKey() == MerchantKey.YEDIAN.getType()) {
+			merchant.setTypeKeyName(MerchantKey.YEDIAN.getDesc());
+		} else if (merchant.getTypeKey() == MerchantKey.LIVE_HOUSE.getType()) {
+			merchant.setTypeKeyName(MerchantKey.LIVE_HOUSE.getDesc());
+		}
         if (!Optional.ofNullable(merchant).isPresent()) {
             throw new ServiceException("商家不存在");
         }

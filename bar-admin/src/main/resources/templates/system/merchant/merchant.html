@@ -51,6 +51,7 @@
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('system:merchant:edit')}]];
         var removeFlag = [[${@permission.hasPermi('system:merchant:remove')}]];
+        var merchantKeyDatas = [[${@dict.getType('merchant_key')}]];
         var prefix = ctx + "system/merchant";
 		var weekArr = ['','周一','周二','周三','周四','周五','周六','周日']
         $(function() {
@@ -67,6 +68,14 @@
                     field: 'id',
                     title: '商户编号',
                     visible: true
+                },
+                {
+                    field: 'typeKey',
+                    title: '商户标签',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(	merchantKeyDatas, value);
+                     }
+                    
                 },
                 {
                     field: 'name',

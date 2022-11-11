@@ -38,9 +38,17 @@ public class Merchant implements Serializable {
     private BigDecimal balance;
 
     /**
-     * 商户类型：1夜店，2酒吧
+     * 提现类型：1.微信，2支付宝，3银行卡
      */
     private Integer type;
+    
+    /**
+     * 商户关键字：1酒吧，2夜店，3livehouse
+     */
+    private Integer typeKey;
+    
+    @TableField(exist = false)
+    private String typeKeyName;
 
     /**
      * 商家名称
