@@ -25,5 +25,14 @@ public interface ActivityMapper extends BaseMapper<Activity> {
      * @return
      */
     Page<ActivityQueryVO> queryActivity(Page<ActivityQueryVO> page, @Param("param") ActivityQueryDTO activityQueryDTO);
+    
+    /**
+     * 分页查询活动 
+     *
+     * @param page
+     * @param activityQueryDTO
+     * @return
+     */
+    Page<Activity> queryActivityPage(Page<ActivityQueryVO> page, @Param("param") ActivityQueryDTO activityQueryDTO);
 
 }

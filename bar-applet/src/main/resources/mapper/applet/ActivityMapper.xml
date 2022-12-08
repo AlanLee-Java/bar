@@ -27,5 +27,34 @@
         DATE_FORMAT( a.start_time, '%Y-%m' ),a.id
         ORDER BY a.start_time
     </select>
+    
+    <select id="queryActivityPage" resultType="com.ruoyi.applet.domain.Activity">
+       SELECT
+			a.id,
+			a.merchant_id AS merchantId,
+			a.`name`,
+			a.picture,
+			a.color,
+			a.start_time AS startTime,
+			a.end_time AS endTime,
+			a.details,
+			a.refund_Rule AS refundRule,
+			a.create_By AS createBy,
+			a.create_Time AS createTime,
+			a.update_By AS updateBy,
+			a.update_Time AS updateTime,
+			m.`name` AS mechantName
+		FROM
+			activity a
+		LEFT JOIN merchant m ON m.id = a.merchant_id
+        <where>
+            <if test="param.name != null and param.name != ''">
+                a.name LIKE CONCAT('%',#{param.name},'%')
+            </if>
+            <if test="param.city != null and param.city != ''">
+                AND m.city = #{param.city}
+            </if>
+        </where>
+    </select>
 
 </mapper>

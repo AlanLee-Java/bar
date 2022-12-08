@@ -66,15 +66,10 @@ public class ActivityController {
             @ApiImplicitParam(name = "current", value = "当前页", dataType = "int", paramType = "query", defaultValue = "1"),
             @ApiImplicitParam(name = "size", value = "每页大小", dataType = "int", paramType = "query", defaultValue = "5")
     })
-    public AppletResult page(@ApiIgnore Page<Activity> page) {
-        QueryWrapper<Activity> activityQueryWrapper = new QueryWrapper<>();
-        Page<Activity> activityPage = activityService.page(page, activityQueryWrapper);
+    public AppletResult page(ActivityQueryDTO activityQueryDTO, @ApiIgnore Page<ActivityQueryVO> page) {
+        Page<Activity> activityPage = activityService.queryActivityPage(page, activityQueryDTO);
         for (Activity activity : activityPage.getRecords()) {
-            // 商家信息
-            Merchant merchant = merchantService.getById(activity.getMerchantId());
-            if (Optional.ofNullable(merchant).isPresent()) {
-                activity.setMechantName(merchant.getName());
-            }
+            
             // 获取活动商品信息
             QueryWrapper<ActivityGoodsJoin> activityGoodsJoinQueryWrapper = new QueryWrapper<>();
             activityGoodsJoinQueryWrapper.eq("activity_id", activity.getId());

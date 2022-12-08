@@ -25,4 +25,13 @@ public interface ActivityService extends IService<Activity> {
      */
     Page<ActivityQueryVO> queryActivity(Page<ActivityQueryVO> page, ActivityQueryDTO activityQueryDTO);
 
+    /**
+     * 分页查询活动
+     *
+     * @param page
+     * @param activityQueryDTO
+     * @return
+     */
+    Page<Activity> queryActivityPage(Page<ActivityQueryVO> page, ActivityQueryDTO activityQueryDTO);
+
 }

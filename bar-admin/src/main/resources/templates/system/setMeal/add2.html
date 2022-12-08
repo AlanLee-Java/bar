@@ -265,6 +265,10 @@
         });
         
 	    function add1(){
+	    	if(setMealId == 0){
+	    		 $.modal.alert("请先保存套餐信息!");
+	    		 return;
+	    	}
 	    	$.operate.add(setMealId);
 	    }
     </script>

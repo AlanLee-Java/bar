@@ -396,6 +396,12 @@
             
         });
 	    function add1(){
+	    	if(activityId == 0){
+	    		 //$("#tabsss a:first").tab('show')
+	    		 $.modal.alert("请先保存活动信息!");
+	    		 //$("a[id=home]")[0].click();
+	    		 return;
+	    	}
 	    	$.operate.add(activityId);
 	    }
         

@@ -2,9 +2,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://124.71.12.51:3306/bar?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-    username: bar
-    password: 3@IhDL4zGd5Z
+    url: jdbc:mysql://localhost:3306/bar?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: "%3HNnleo9p8R"
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       # 初始连接数
@@ -53,5 +53,5 @@ swagger:
   enabled: false
 
 domain:
-  appletUrl: http://124.71.12.51:8080/applet
-  adminUrl: http://124.71.12.51/admin
+  appletUrl: https://boomb.com.cn/applet
+  adminUrl: https://boomb.com.cn/admin
